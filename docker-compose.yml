@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    php_fpm:
+        build:
+            context: .
+            dockerfile: ./docker/php-fpm/Dockerfile
+            args:
+                UID: ${UID:-82}
+                GID: ${GID:-82}
+        command: php -S 0.0.0.0:8000 -t public
+        ports:
+            - 8000:8000
+        volumes:
+            - ./:/srv/app:rw,cached
+#            - logs:/srv/var/logs
+    node:
+        image: node:12-alpine
+        command: tail -f /dev/null
+        logging:
+            options:
+                max-size: '10m'
+                max-file: '3'
+        ports:
+            - 3000:3000
+        working_dir: /var/www/app
+        volumes:
+            - ./:/var/www/app
+
